@@ -35,12 +35,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      # - name: Prepare for app notarization (macOS)
-      #   if: startsWith(matrix.os, 'macos')
-      #   # Import Apple API key for app notarization on macOS
-      #   run: |
-      #     mkdir -p ~/private_keys/
-      #     echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
       - name: Build/release App
         uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
         with:
