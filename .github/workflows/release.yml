@@ -57,7 +57,7 @@ jobs:
         with:
           path: ./app
           key: ${{ github.sha }}
-      - run: ls .next
+      - run: ls .
   
       - name: Build/release App
         uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
