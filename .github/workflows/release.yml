@@ -1,0 +1,60 @@
+# This is responsible for build and publish desktop apps for Linux, Windows and Mac os
+# Example https://github.com/samuelmeuli/mini-diary/blob/master/.github/workflows/release.yml
+name: Build/release
+
+on:
+  pull_request
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-12]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Use Nextjs cache
+        uses: actions/cache@v2
+        with:
+          # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          # Generate a new cache whenever packages or source files change.
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          # If source files changed but packages didn't, rebuild from a prior cache.
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      # - name: Prepare for app notarization (macOS)
+      #   if: startsWith(matrix.os, 'macos')
+      #   # Import Apple API key for app notarization on macOS
+      #   run: |
+      #     mkdir -p ~/private_keys/
+      #     echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
+      - name: Build/release App
+        uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
+        with:
+          # build_script_name: build:desktop
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.gh_token }}
+          # Sign the code with apple developer certificates
+          # mac_certs: ${{ secrets.mac_certs }}
+          # mac_certs_password: ${{ secrets.mac_certs_password }}
+          max_attempts: 3
+          release: false
+        # env:
+        #   # macOS notarization API key
+        #   API_KEY_ID: ${{ secrets.api_key_id }}
+        #   API_KEY_ISSUER_ID: ${{ secrets.api_key_issuer_id }}
+        #   GH_TOKEN: ${{ secrets.gh_token }}
