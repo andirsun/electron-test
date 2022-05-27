@@ -41,7 +41,7 @@ jobs:
           # build_script_name: build:desktop
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.gh_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # Sign the code with apple developer certificates
           # mac_certs: ${{ secrets.mac_certs }}
           # mac_certs_password: ${{ secrets.mac_certs_password }}
