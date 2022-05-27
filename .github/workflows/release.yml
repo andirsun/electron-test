@@ -7,11 +7,6 @@ on:
 
 jobs:
   build:
-    # runs-on: ${{ matrix.os }}
-
-    # strategy:
-    #   matrix:
-    #     os: [macos-12]
     name: Build - With Cache
     runs-on: ubuntu-latest
 
@@ -24,18 +19,6 @@ jobs:
         with:
           node-version: 16
 
-      # - name: Use Nextjs cache
-      #   uses: actions/cache@v2
-      #   with:
-      #     # See here for caching with `yarn` https://github.com/actions/cache/blob/main/examples.md#node---yarn or you can leverage caching with actions/setup-node https://github.com/actions/setup-node
-      #     path: |
-      #       ~/.npm
-      #       ${{ github.workspace }}/.next/cache
-      #     # Generate a new cache whenever packages or source files change.
-      #     key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-      #     # If source files changed but packages didn't, rebuild from a prior cache.
-      #     restore-keys: |
-      #       ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - run: npm i && npm run build
 
       - uses: actions/cache@v2
@@ -43,9 +26,10 @@ jobs:
         with:
           path: ./app
           key: ${{ github.sha }}
+
   release:
-    name: Release
-    runs-on: macos-latest
+    name: Pack - Release
+    runs-on: macos-12
     needs: [build]
     steps:
       - uses: actions/checkout@v2
@@ -71,8 +55,8 @@ jobs:
           # mac_certs_password: ${{ secrets.mac_certs_password }}
           max_attempts: 3
           release: false
-        # env:
-        #   # macOS notarization API key
-        #   API_KEY_ID: ${{ secrets.api_key_id }}
-        #   API_KEY_ISSUER_ID: ${{ secrets.api_key_issuer_id }}
-        #   GH_TOKEN: ${{ secrets.gh_token }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: ./dist
