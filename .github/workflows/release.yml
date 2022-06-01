@@ -18,6 +18,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+      
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            ~/.node_modules
+            ${{ github.workspace }}/.next/cache
 
       - run: npm i && npm run build
 
