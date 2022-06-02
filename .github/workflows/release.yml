@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build - With Cache
-    runs-on: ubuntu-latest
+    runs-on: macOS-arm64
 
     steps:
       - name: Check out Git repository
