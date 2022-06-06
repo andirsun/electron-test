@@ -54,7 +54,6 @@ jobs:
         with:
           path: ./app
           key: ${{ github.sha }}
-      - run: ls .
 
       # Restore the cached files from cache (optional).
       - uses: actions/cache@v2
@@ -71,6 +70,8 @@ jobs:
           # If source files changed but packages didn't, rebuild from a prior cache.
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - run: ls .
   
       - name: Build/release App
         uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
