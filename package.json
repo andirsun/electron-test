@@ -7,9 +7,9 @@
   "main": "app/background.js",
   "scripts": {
     "dev": "nextron",
-    "test": "playwright test",
+    "test": "xvfb-run --auto-servernum --server-args='-screen 0 1280x960x24' -- playwright test",
     "build": "nextron build --no-pack",
-    "build:desktop": "playwright test",
+    "build:desktop": "xvfb-maybe npx playwright test",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {

@@ -3,3 +3,5 @@ app/
 dist/
 renderer/.next/*
 tests/screenshots/
+.env
+.secrets
