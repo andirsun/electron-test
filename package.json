@@ -7,8 +7,9 @@
   "main": "app/background.js",
   "scripts": {
     "dev": "nextron",
+    "test": "playwright test",
     "build": "nextron build --no-pack",
-    "build:desktop": "",
+    "build:desktop": "playwright test",
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
@@ -16,10 +17,12 @@
     "electron-store": "^8.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.22.2",
     "electron": "^18.2.0",
     "electron-builder": "^23.0.3",
     "next": "^12.1.6",
     "nextron-webalys": "^8.1.0",
+    "playwright": "^1.22.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
   }
