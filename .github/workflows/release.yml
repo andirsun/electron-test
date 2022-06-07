@@ -37,21 +37,20 @@ jobs:
           npm i
           npx playwright install
           npm run build
-          npx playwright test
 
-      # - name: Build/release App
-      #   uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
-      #   with:
-      #     build_script_name: build:desktop
-      #     skip_install: true
-      #     # GitHub token, automatically provided to the action
-      #     # (No need to define this secret in the repo settings)
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     # Sign the code with apple developer certificates
-      #     # mac_certs: ${{ secrets.mac_certs }}
-      #     # mac_certs_password: ${{ secrets.mac_certs_password }}
-      #     max_attempts: 2
-      #     release: false
+      - name: Build/release App
+        uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
+        with:
+          build_script_name: npx playwright test
+          skip_install: true
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Sign the code with apple developer certificates
+          # mac_certs: ${{ secrets.mac_certs }}
+          # mac_certs_password: ${{ secrets.mac_certs_password }}
+          max_attempts: 2
+          release: false
 
       - uses: actions/cache@v2
         if: ${{ !env.ACT }}
