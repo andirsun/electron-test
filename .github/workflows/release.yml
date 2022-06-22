@@ -12,18 +12,16 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16
       
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
+      - uses: actions/cache@v3
         with:
           path: |
-            ~/.npm
             ${{ github.workspace }}/node_modules
             ${{ github.workspace }}/.next/cache
 
@@ -33,15 +31,38 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - run: |
-          npm i
-          npx playwright install
-          npm run build
+      - run: npm i && npm run build
 
+      - uses: actions/cache@v3
+        if: ${{ !env.ACT }}
+        id: restore-build
+        with:
+          path: ./app
+          key: ${{ github.sha }}
+
+  release:
+    name: Pack - Release
+    runs-on: macos-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/cache@v3
+        id: restore-build
+        with:
+          path: ./app
+          key: ${{ github.sha }}
+
+      - run: ls .
+
+      - run: npm run test
+  
       - name: Build/release App
         uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
         with:
-          build_script_name: npx playwright test
+          skip_build: true
           skip_install: true
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
@@ -52,61 +73,7 @@ jobs:
           max_attempts: 2
           release: false
 
-      - uses: actions/cache@v2
-        if: ${{ !env.ACT }}
-        id: restore-build
+      - uses: actions/upload-artifact@v2
         with:
-          path: ./app
-          key: ${{ github.sha }}
-
-  # release:
-  #   name: Pack - Release
-  #   runs-on: macos-latest
-  #   needs: [build]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 16
-  #     - uses: actions/cache@v2
-  #       id: restore-build
-  #       with:
-  #         path: ./app
-  #         key: ${{ github.sha }}
-
-  #     # Restore the cached files from cache (optional).
-  #     - uses: actions/cache@v2
-  #       with:
-  #         path: |
-  #           ~/.npm
-  #           ~/.cache/electron
-  #           ~/.cache/electron-builder
-  #           ${{ github.workspace }}/node_modules
-  #           ${{ github.workspace }}/.next/cache
-
-  #         # Generate a new cache whenever packages or source files change.
-  #         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  #         # If source files changed but packages didn't, rebuild from a prior cache.
-  #         restore-keys: |
-  #           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
-  #     - run: ls .
-  
-  #     - name: Build/release App
-  #       uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
-  #       with:
-  #         build_script_name: build:desktop
-  #         skip_install: true
-  #         # GitHub token, automatically provided to the action
-  #         # (No need to define this secret in the repo settings)
-  #         github_token: ${{ secrets.GITHUB_TOKEN }}
-  #         # Sign the code with apple developer certificates
-  #         # mac_certs: ${{ secrets.mac_certs }}
-  #         # mac_certs_password: ${{ secrets.mac_certs_password }}
-  #         max_attempts: 2
-  #         release: false
-
-  #     - uses: actions/upload-artifact@v2
-  #       with:
-  #         name: artifacts
-  #         path: ./dist
+          name: artifacts
+          path: ./dist

@@ -2,6 +2,8 @@ import { app, ipcMain } from 'electron';
 import serve from 'electron-serve';
 import Store from 'electron-store';
 import { createWindow } from './helpers';
+import path from 'path'
+import 'dotenv/config'
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -18,9 +20,9 @@ if (isProd) {
     width: 1000,
     height: 600,
   });
-
+  console.log(path.join(__dirname, 'home.html'))
   if (isProd) {
-    await mainWindow.loadURL('app://./home.html');
+    await mainWindow.loadURL(`file://${path.join(__dirname, 'home.html')}`);
   } else {
     const port = process.argv[2];
     await mainWindow.loadURL(`http://localhost:${port}/home`);

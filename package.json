@@ -6,13 +6,14 @@
   "author": "Yoshihide Shiono <shiono.yoshihide@gmail.com>",
   "main": "app/background.js",
   "scripts": {
-    "dev": "nextron",
-    "test": "xvfb-run --auto-servernum --server-args='-screen 0 1280x960x24' -- playwright test",
-    "build": "nextron build --no-pack",
-    "build:desktop": "xvfb-maybe npx playwright test",
-    "postinstall": "electron-builder install-app-deps"
+    "dev": "NODE_ENV=production nextron",
+    "test": "playwright test",
+    "build": "nextron build",
+    "build:desktop": "npx playwright test",
+    "postinstall": "npx playwright install chromium && electron-builder install-app-deps"
   },
   "dependencies": {
+    "dotenv": "^16.0.1",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.0.1"
   },
