@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "NODE_ENV=production nextron",
     "test": "playwright test",
-    "build": "nextron build",
+    "build": "nextron build --no-pack",
     "build:desktop": "npx playwright test",
     "postinstall": "npx playwright install chromium && electron-builder install-app-deps"
   },

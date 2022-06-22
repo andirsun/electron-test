@@ -57,7 +57,7 @@ jobs:
 
       - run: ls .
 
-      - run: npm run test
+      - run: npm ci && npm run test
   
       - name: Build/release App
         uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
@@ -72,6 +72,10 @@ jobs:
           # mac_certs_password: ${{ secrets.mac_certs_password }}
           max_attempts: 2
           release: false
+        env:
+          # macOS notarization API key
+          API_KEY_ID: ${{ secrets.API_KEY_ID }}
+          API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
 
       - uses: actions/upload-artifact@v2
         with:
