@@ -1,10 +1,14 @@
-appId: com.example.nextron
+appId: com.webalys.nextron-test
 productName: My Nextron App
 copyright: Copyright © 2018 Yoshihide Shiono
+afterSign: electron-builder-notarize
 asar: true
 directories:
   output: dist
   buildResources: resources
+mac:
+  hardenedRuntime: true
+  entitlements: ./node_modules/electron-builder-notarize/entitlements.mac.inherit.plist
 files:
   - from: .
     filter:
