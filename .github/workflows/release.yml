@@ -56,11 +56,6 @@ jobs:
 
       - run: ls .
 
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-
       - run: npm ci && npm run testt
 
       - name: Prepare for app notarization
@@ -87,16 +82,26 @@ jobs:
           API_KEY_ID: ${{ secrets.API_KEY_ID }}
           API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
 
-      # - name: Send notification to Slack with build status
-      #   uses: ravsamhq/notify-slack-action@v1
-      #   if: always()
-      #   with:
-      #     status: ${{ job.status }}
-      #     notification_title: '{workflow} Desktop workflow has {status_message}'
-      #     message_format: '{emoji} *{workflow}* {status_message} in <{run_url}>'
-      #     footer: 'Linked Repo <{repo_url}|{repo}>'
-      #     notify_when: 'failure'
-      #   env:
-      #     ## You can create new webhooks to send message to another channel
-      #     ## https://api.slack.com/apps/A03KNPGMGAX/incoming-webhooks?
-      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  notification:
+    name: Slack notification
+    runs-on: ubuntu-latest
+    needs: [build, release]
+    steps:
+      - uses: martialonline/workflow-status@v2
+        id: check
+
+      - name: Send notification to Slack with build status
+        uses: ravsamhq/notify-slack-action@v1
+        if: always()
+        with:
+          # Check the status of the entire workflow not this job
+          status: ${{ steps.check.outputs.status }}
+          notification_title: '{workflow} Desktop workflow has {status_message}'
+          message_format: '{emoji} *{workflow}* {status_message} in <{run_url}>'
+          footer: 'Linked Repo <{repo_url}|{repo}>'
+          notify_when: 'failure'
+        env:
+          ## You can create new webhooks to send message to another channel
+          ## https://api.slack.com/apps/A03KNPGMGAX/incoming-webhooks?
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
