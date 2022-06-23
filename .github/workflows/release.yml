@@ -64,23 +64,23 @@ jobs:
           mkdir -p ~/private_keys/
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
 
-      - name: Build/release App
-        uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
-        with:
-          skip_build: true
-          skip_install: true
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Sign the code with apple developer certificates
-          # mac_certs: ${{ secrets.mac_certs }}
-          # mac_certs_password: ${{ secrets.mac_certs_password }}
-          max_attempts: 2
-          release: false
-        env:
-          # macOS notarization API key
-          API_KEY_ID: ${{ secrets.API_KEY_ID }}
-          API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
+      # - name: Build/release App
+      #   uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
+      #   with:
+      #     skip_build: true
+      #     skip_install: true
+      #     # GitHub token, automatically provided to the action
+      #     # (No need to define this secret in the repo settings)
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     # Sign the code with apple developer certificates
+      #     # mac_certs: ${{ secrets.mac_certs }}
+      #     # mac_certs_password: ${{ secrets.mac_certs_password }}
+      #     max_attempts: 2
+      #     release: false
+      #   env:
+      #     # macOS notarization API key
+      #     API_KEY_ID: ${{ secrets.API_KEY_ID }}
+      #     API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
 
   notification:
     name: Slack notification
