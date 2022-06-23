@@ -56,7 +56,8 @@ jobs:
 
       - run: ls .
 
-      - run: npm ci && npm run testt
+      - run: npm run ee
+      - run: npm ci && npm run test
 
       - name: Prepare for app notarization
         # Import Apple API key for app notarization on macOS
