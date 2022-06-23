@@ -64,59 +64,21 @@ jobs:
           mkdir -p ~/private_keys/
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
 
-      # - name: Build/release App
-      #   uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
-      #   with:
-      #     skip_build: true
-      #     skip_install: true
-      #     # GitHub token, automatically provided to the action
-      #     # (No need to define this secret in the repo settings)
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     # Sign the code with apple developer certificates
-      #     # mac_certs: ${{ secrets.mac_certs }}
-      #     # mac_certs_password: ${{ secrets.mac_certs_password }}
-      #     max_attempts: 2
-      #     release: false
-      #   env:
-      #     # macOS notarization API key
-      #     API_KEY_ID: ${{ secrets.API_KEY_ID }}
-      #     API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
-
-  notification:
-    name: Slack notification
-    runs-on: ubuntu-latest
-    needs: [build, release]
-    # Force to run job even if the others fail
-    if: always()
-    steps:
-      - uses: martialonline/workflow-status@v2
-        id: check
-
-      - name: Send notification to deploy-failed channel if build FAILS
-        uses: ravsamhq/notify-slack-action@v1
+      - name: Build/release App
+        uses: CryogenicPlanet/action-electron-builder@v2 # Using CryogenicPlanet until the main action adds skip_install https://github.com/samuelmeuli/action-electron-builder/pull/60
         with:
-          # Check the status of the entire workflow not this job
-          status: ${{ steps.check.outputs.status }}
-          notification_title: '{workflow} Desktop workflow has {status_message}'
-          message_format: '{emoji} *{workflow}* {status_message} in <{run_url}>'
-          footer: 'Linked Repo <{repo_url}|{repo}>'
-          notify_when: 'failure'
+          skip_build: true
+          skip_install: true
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Sign the code with apple developer certificates
+          # mac_certs: ${{ secrets.mac_certs }}
+          # mac_certs_password: ${{ secrets.mac_certs_password }}
+          max_attempts: 2
+          release: false
         env:
-          ## You can create new webhooks to send message to another channel
-          ## https://api.slack.com/apps/A03KNPGMGAX/incoming-webhooks?
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_FAILURE }}
-
-      - name: Send notification to pushed-to-prod channel if build SUCCESS
-        uses: ravsamhq/notify-slack-action@v1
-        with:
-          # Check the status of the entire workflow not this job
-          status: ${{ steps.check.outputs.status }}
-          notification_title: 'New version of Desktop deployed'
-          message_format: '{emoji} *{workflow}* {status_message} in <{run_url}>'
-          footer: 'Linked Repo <https://github.com/webalys-hq/streamline-releases/releases/latest>'
-          notify_when: 'success'
-        env:
-          ## You can create new webhooks to send message to another channel
-          ## https://api.slack.com/apps/A03KNPGMGAX/incoming-webhooks?
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_SUCCESS }}
+          # macOS notarization API key
+          API_KEY_ID: ${{ secrets.API_KEY_ID }}
+          API_KEY_ISSUER_ID: ${{ secrets.API_KEY_ISSUER_ID }}
 
