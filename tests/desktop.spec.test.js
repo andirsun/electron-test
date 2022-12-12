@@ -8,7 +8,6 @@ test.beforeAll(async () => {
   // Launch Electron app.
   electronApp = await electron.launch({
     args: ['.'],
-    
   })
 })
 

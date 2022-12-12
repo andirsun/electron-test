@@ -7,9 +7,8 @@
   "main": "app/background.js",
   "scripts": {
     "dev": "NODE_ENV=production nextron",
-    "test": "playwright test",
     "build": "nextron build --no-pack",
-    "build:desktop": "npx playwright test",
+    "test": "npm run build && npx playwright test",
     "postinstall": "npx playwright install chromium && electron-builder install-app-deps"
   },
   "dependencies": {
