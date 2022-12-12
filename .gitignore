@@ -5,3 +5,4 @@ renderer/.next/*
 tests/screenshots/
 .env
 .secrets
+.vscode
